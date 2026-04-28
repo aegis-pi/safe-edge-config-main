@@ -4,6 +4,15 @@ integratedAi:
   preferredNode: worker2
   tolerationSeconds: 30
   replicas: 1
+  snapshotStorage:
+    enabled: true
+    claimName: safe-edge-ai-snapshots
+    storageClassName: longhorn
+    size: 5Gi
+    mountPath: /app/snapshots
+    retentionHours: 24
+    cleanupIntervalSeconds: 3600
+    cleanupImage: busybox:1.36
 
 audio:
   image: minsoo0919/safe-edge-audio:v2

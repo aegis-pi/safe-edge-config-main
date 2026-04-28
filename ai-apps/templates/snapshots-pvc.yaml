@@ -1,0 +1,16 @@
+{{- if .Values.integratedAi.snapshotStorage.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.integratedAi.snapshotStorage.claimName }}
+  namespace: ai-apps
+  labels:
+    app: safe-edge-integrated-ai
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: {{ .Values.integratedAi.snapshotStorage.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.integratedAi.snapshotStorage.size }}
+{{- end }}

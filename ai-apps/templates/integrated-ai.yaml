@@ -50,6 +50,33 @@ spec:
           mountPath: /dev
         - name: udev-dir
           mountPath: /run/udev
+        {{- if .Values.integratedAi.snapshotStorage.enabled }}
+        - name: snapshot-storage
+          mountPath: {{ .Values.integratedAi.snapshotStorage.mountPath }}
+        {{- end }}
+      {{- if .Values.integratedAi.snapshotStorage.enabled }}
+      - name: snapshot-cleanup
+        image: {{ .Values.integratedAi.snapshotStorage.cleanupImage }}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SNAPSHOT_DIR
+          value: {{ .Values.integratedAi.snapshotStorage.mountPath | quote }}
+        - name: RETENTION_MINUTES
+          value: {{ mul .Values.integratedAi.snapshotStorage.retentionHours 60 | quote }}
+        - name: CLEANUP_INTERVAL_SECONDS
+          value: {{ .Values.integratedAi.snapshotStorage.cleanupIntervalSeconds | quote }}
+        command:
+        - sh
+        - -c
+        - |
+          while true; do
+            find "$SNAPSHOT_DIR" -type f \( -name '*.jpg' -o -name '*.jpeg' -o -name '*.png' \) -mmin +"$RETENTION_MINUTES" -exec rm -f {} \;
+            sleep "$CLEANUP_INTERVAL_SECONDS"
+          done
+        volumeMounts:
+        - name: snapshot-storage
+          mountPath: {{ .Values.integratedAi.snapshotStorage.mountPath }}
+      {{- end }}
       volumes:
       - name: dev-dir
         hostPath:
@@ -57,3 +84,8 @@ spec:
       - name: udev-dir
         hostPath:
           path: /run/udev
+      {{- if .Values.integratedAi.snapshotStorage.enabled }}
+      - name: snapshot-storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.integratedAi.snapshotStorage.claimName }}
+      {{- end }}
