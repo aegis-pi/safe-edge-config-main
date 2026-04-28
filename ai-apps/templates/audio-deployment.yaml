@@ -35,6 +35,7 @@ spec:
       containers:
       - name: audio-analyzer
         image: {{ .Values.audio.image }}
+        imagePullPolicy: {{ .Values.audio.imagePullPolicy }}
         securityContext:
           privileged: true
         volumeMounts:

@@ -1,0 +1,42 @@
+{{- if .Values.imagePrepull.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: safe-edge-image-prepull
+  namespace: ai-apps
+  labels:
+    app: safe-edge-image-prepull
+spec:
+  selector:
+    matchLabels:
+      app: safe-edge-image-prepull
+  template:
+    metadata:
+      labels:
+        app: safe-edge-image-prepull
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+{{- range .Values.imagePrepull.nodes }}
+                - {{ . }}
+{{- end }}
+      initContainers:
+      - name: prepull-integrated-ai
+        image: {{ .Values.integratedAi.image }}
+        imagePullPolicy: {{ .Values.integratedAi.imagePullPolicy }}
+        command: ["/bin/sh", "-c", "true"]
+      - name: prepull-audio
+        image: {{ .Values.audio.image }}
+        imagePullPolicy: {{ .Values.audio.imagePullPolicy }}
+        command: ["/bin/sh", "-c", "true"]
+      containers:
+      - name: pause
+        image: {{ .Values.imagePrepull.pauseImage }}
+        imagePullPolicy: IfNotPresent
+{{- end }}

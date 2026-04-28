@@ -1,12 +1,20 @@
 integratedAi:
   image: minsoo0919/safe-edge-ai:v6
-  imagePullPolicy: Always
+  imagePullPolicy: IfNotPresent
   preferredNode: worker2
   tolerationSeconds: 30
   replicas: 1
 
 audio:
   image: minsoo0919/safe-edge-audio:v2
+  imagePullPolicy: IfNotPresent
   preferredNode: worker2
   tolerationSeconds: 30
   replicas: 1
+
+imagePrepull:
+  enabled: true
+  nodes:
+    - worker1
+    - worker2
+  pauseImage: registry.k8s.io/pause:3.10
