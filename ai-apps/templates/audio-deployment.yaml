@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safe-edge-audio
+  namespace: ai-apps
+spec:
+  replicas: {{ .Values.audio.replicas }}
+  selector:
+    matchLabels:
+      app: safe-edge-audio
+  template:
+    metadata:
+      labels:
+        app: safe-edge-audio
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - {{ .Values.audio.preferredNode }}
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: {{ .Values.audio.tolerationSeconds }}
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: {{ .Values.audio.tolerationSeconds }}
+      containers:
+      - name: audio-analyzer
+        image: {{ .Values.audio.image }}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: dev-snd
+          mountPath: /dev/snd
+      volumes:
+      - name: dev-snd
+        hostPath:
+          path: /dev/snd

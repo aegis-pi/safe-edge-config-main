@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safe-edge-integrated-ai
+  namespace: ai-apps
+  labels:
+    app: safe-edge-integrated-ai
+spec:
+  replicas: {{ .Values.integratedAi.replicas }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: safe-edge-integrated-ai
+  template:
+    metadata:
+      labels:
+        app: safe-edge-integrated-ai
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - {{ .Values.integratedAi.preferredNode }}
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: {{ .Values.integratedAi.tolerationSeconds }}
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: {{ .Values.integratedAi.tolerationSeconds }}
+      containers:
+      - name: ai-processor
+        image: {{ .Values.integratedAi.image }}
+        imagePullPolicy: {{ .Values.integratedAi.imagePullPolicy }}
+        securityContext:
+          privileged: true
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        volumeMounts:
+        - name: dev-dir
+          mountPath: /dev
+        - name: udev-dir
+          mountPath: /run/udev
+      volumes:
+      - name: dev-dir
+        hostPath:
+          path: /dev
+      - name: udev-dir
+        hostPath:
+          path: /run/udev

@@ -1,0 +1,12 @@
+integratedAi:
+  image: minsoo0919/safe-edge-ai:v6
+  imagePullPolicy: Always
+  preferredNode: worker2
+  tolerationSeconds: 30
+  replicas: 1
+
+audio:
+  image: minsoo0919/safe-edge-audio:v2
+  preferredNode: worker2
+  tolerationSeconds: 30
+  replicas: 1

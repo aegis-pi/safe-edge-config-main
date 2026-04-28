@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ai-apps
+description: Safe-Edge Blackbox AI detection apps
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
