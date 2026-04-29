@@ -20,6 +20,8 @@ integratedAi:
       memory: 64Mi
   snapshotStorage:
     enabled: true
+    type: hostPath
+    hostPath: /var/lib/safe-edge/snapshots
     claimName: safe-edge-ai-snapshots
     storageClassName: longhorn
     size: 5Gi

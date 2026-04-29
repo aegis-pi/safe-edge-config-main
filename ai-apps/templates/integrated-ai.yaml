@@ -102,6 +102,12 @@ spec:
           path: /run/udev
       {{- if .Values.integratedAi.snapshotStorage.enabled }}
       - name: snapshot-storage
+        {{- if eq .Values.integratedAi.snapshotStorage.type "hostPath" }}
+        hostPath:
+          path: {{ .Values.integratedAi.snapshotStorage.hostPath }}
+          type: DirectoryOrCreate
+        {{- else }}
         persistentVolumeClaim:
           claimName: {{ .Values.integratedAi.snapshotStorage.claimName }}
+        {{- end }}
       {{- end }}

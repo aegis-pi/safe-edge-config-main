@@ -1,4 +1,4 @@
-{{- if .Values.integratedAi.snapshotStorage.enabled }}
+{{- if and .Values.integratedAi.snapshotStorage.enabled (eq .Values.integratedAi.snapshotStorage.type "pvc") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
