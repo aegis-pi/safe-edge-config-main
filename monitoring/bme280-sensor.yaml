@@ -43,6 +43,7 @@ spec:
       containers:
       - name: bme280
         image: minsoo0919/bme280-sensor:v2
+        imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true 
         volumeMounts:

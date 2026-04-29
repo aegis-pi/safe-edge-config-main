@@ -24,6 +24,7 @@ spec:
       containers:
       - name: node-exporter
         image: prom/node-exporter:latest
+        imagePullPolicy: IfNotPresent
         args:
         - --path.procfs=/host/proc
         - --path.sysfs=/host/sys

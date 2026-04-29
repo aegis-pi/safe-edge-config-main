@@ -43,6 +43,7 @@ spec:
       containers:
       - name: prometheus
         image: prom/prometheus:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
         # 👇 설정 파일을 컨테이너 내부로 덮어쓰는 부분 추가
