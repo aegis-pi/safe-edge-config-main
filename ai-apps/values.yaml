@@ -29,6 +29,13 @@ integratedAi:
     retentionHours: 24
     cleanupIntervalSeconds: 3600
     cleanupImage: busybox:1.36
+    dailyPurge:
+      enabled: true
+      schedule: "0 3 * * *"
+      timeZone: Asia/Seoul
+      nodes:
+        - worker1
+        - worker2
 
 audio:
   image: minsoo0919/safe-edge-audio:v2

@@ -1,0 +1,61 @@
+{{- if and .Values.integratedAi.snapshotStorage.enabled (eq .Values.integratedAi.snapshotStorage.type "hostPath") .Values.integratedAi.snapshotStorage.dailyPurge.enabled }}
+{{- range .Values.integratedAi.snapshotStorage.dailyPurge.nodes }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: safe-edge-snapshot-daily-purge-{{ . }}
+  namespace: ai-apps
+  labels:
+    app: safe-edge-snapshot-daily-purge
+    safe-edge/node: {{ . | quote }}
+spec:
+  schedule: {{ $.Values.integratedAi.snapshotStorage.dailyPurge.schedule | quote }}
+  timeZone: {{ $.Values.integratedAi.snapshotStorage.dailyPurge.timeZone | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: safe-edge-snapshot-daily-purge
+            safe-edge/node: {{ . | quote }}
+        spec:
+          restartPolicy: OnFailure
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                    - {{ . }}
+          containers:
+          - name: purge-snapshots
+            image: {{ $.Values.integratedAi.snapshotStorage.cleanupImage }}
+            imagePullPolicy: IfNotPresent
+            resources:
+{{ toYaml $.Values.integratedAi.cleanupResources | indent 14 }}
+            env:
+            - name: SNAPSHOT_DIR
+              value: {{ $.Values.integratedAi.snapshotStorage.mountPath | quote }}
+            command:
+            - sh
+            - -c
+            - |
+              set -eu
+              test -d "$SNAPSHOT_DIR"
+              find "$SNAPSHOT_DIR" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            volumeMounts:
+            - name: snapshot-storage
+              mountPath: {{ $.Values.integratedAi.snapshotStorage.mountPath }}
+          volumes:
+          - name: snapshot-storage
+            hostPath:
+              path: {{ $.Values.integratedAi.snapshotStorage.hostPath }}
+              type: DirectoryOrCreate
+{{- end }}
+{{- end }}
