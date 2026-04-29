@@ -5,6 +5,8 @@ metadata:
   namespace: ai-apps
 spec:
   replicas: {{ .Values.audio.replicas }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: safe-edge-audio

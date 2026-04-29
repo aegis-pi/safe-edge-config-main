@@ -5,6 +5,8 @@ metadata:
   namespace: monitoring  # 네임스페이스가 monitoring 입니다!
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: bme280-sensor

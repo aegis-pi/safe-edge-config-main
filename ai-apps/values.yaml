@@ -10,7 +10,7 @@ integratedAi:
       memory: 1500Mi
     limits:
       cpu: 2000m
-      memory: 2500Mi
+      memory: 2000Mi
   cleanupResources:
     requests:
       cpu: 10m
@@ -40,7 +40,7 @@ audio:
       memory: 1500Mi
     limits:
       cpu: 1000m
-      memory: 2200Mi
+      memory: 2000Mi
 
 imagePrepull:
   enabled: true
