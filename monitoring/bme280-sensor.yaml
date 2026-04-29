@@ -44,6 +44,13 @@ spec:
       - name: bme280
         image: minsoo0919/bme280-sensor:v2
         imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
         securityContext:
           privileged: true 
         volumeMounts:

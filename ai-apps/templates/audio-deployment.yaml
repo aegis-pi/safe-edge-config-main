@@ -36,6 +36,8 @@ spec:
       - name: audio-analyzer
         image: {{ .Values.audio.image }}
         imagePullPolicy: {{ .Values.audio.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.audio.resources | indent 10 }}
         securityContext:
           privileged: true
         volumeMounts:

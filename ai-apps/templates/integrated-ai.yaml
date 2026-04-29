@@ -40,6 +40,8 @@ spec:
       - name: ai-processor
         image: {{ .Values.integratedAi.image }}
         imagePullPolicy: {{ .Values.integratedAi.imagePullPolicy }}
+        resources:
+{{ toYaml .Values.integratedAi.resources | indent 10 }}
         securityContext:
           privileged: true
         env:
@@ -58,6 +60,8 @@ spec:
       - name: snapshot-cleanup
         image: {{ .Values.integratedAi.snapshotStorage.cleanupImage }}
         imagePullPolicy: IfNotPresent
+        resources:
+{{ toYaml .Values.integratedAi.cleanupResources | indent 10 }}
         env:
         - name: SNAPSHOT_DIR
           value: {{ .Values.integratedAi.snapshotStorage.mountPath | quote }}

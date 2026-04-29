@@ -4,6 +4,20 @@ integratedAi:
   preferredNode: worker2
   tolerationSeconds: 30
   replicas: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1500Mi
+    limits:
+      cpu: 2000m
+      memory: 2500Mi
+  cleanupResources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
   snapshotStorage:
     enabled: true
     claimName: safe-edge-ai-snapshots
@@ -20,6 +34,13 @@ audio:
   preferredNode: worker2
   tolerationSeconds: 30
   replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 1500Mi
+    limits:
+      cpu: 1000m
+      memory: 2200Mi
 
 imagePrepull:
   enabled: true

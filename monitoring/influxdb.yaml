@@ -30,6 +30,14 @@ spec:
       - name: influxdb
         # 아키텍처 에러 방지를 위해 ARM64 지원 이미지로 고정
         image: arm64v8/influxdb:1.8
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 768Mi
         ports:
         - containerPort: 8086
         volumeMounts:
